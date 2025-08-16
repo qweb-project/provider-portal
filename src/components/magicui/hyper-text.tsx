@@ -4,29 +4,19 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, type MotionProps } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
-type CharacterSet = string[] | readonly string[];
-
 interface HyperTextProps extends MotionProps {
-  /** The text content to be animated */
   children: string;
-  /** Optional className for styling */
   className?: string;
-  /** Duration of the animation in milliseconds */
   duration?: number;
-  /** Delay before animation starts in milliseconds */
   delay?: number;
-  /** Component to render as - defaults to div */
   as?: React.ElementType;
-  /** Whether to start animation when element comes into view */
   startOnView?: boolean;
-  /** Whether to trigger animation on hover */
   animateOnHover?: boolean;
-  /** Custom character set for scramble effect. Defaults to uppercase alphabet */
-  characterSet?: CharacterSet;
+  characterSet?: readonly string[];
 }
 
 const DEFAULT_CHARACTER_SET = Object.freeze(
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("")
 ) as readonly string[];
 
 const getRandomInt = (max: number): number => Math.floor(Math.random() * max);
@@ -47,7 +37,7 @@ export function HyperText({
   });
 
   const [displayText, setDisplayText] = useState<string[]>(() =>
-    children.split(""),
+    children.split("")
   );
   const [isAnimating, setIsAnimating] = useState(false);
   const iterationCount = useRef(0);
@@ -60,7 +50,6 @@ export function HyperText({
     }
   };
 
-  // Handle animation start based on view or delay
   useEffect(() => {
     if (!startOnView) {
       const startTimeout = setTimeout(() => {
@@ -78,7 +67,7 @@ export function HyperText({
           observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: "-30% 0px -30% 0px" },
+      { threshold: 0.1, rootMargin: "-30% 0px -30% 0px" }
     );
 
     if (elementRef.current) {
@@ -88,7 +77,6 @@ export function HyperText({
     return () => observer.disconnect();
   }, [delay, startOnView]);
 
-  // Handle scramble animation
   useEffect(() => {
     if (!isAnimating) return;
 
@@ -102,14 +90,14 @@ export function HyperText({
 
       iterationCount.current = progress * maxIterations;
 
-      setDisplayText((currentText) =>
+      setDisplayText(currentText =>
         currentText.map((letter, index) =>
           letter === " "
             ? letter
             : index <= iterationCount.current
               ? children[index] || ""
-              : characterSet[getRandomInt(characterSet.length)] || "",
-        ),
+              : characterSet[getRandomInt(characterSet.length)] || ""
+        )
       );
 
       if (progress < 1) {
@@ -133,14 +121,13 @@ export function HyperText({
     >
       <AnimatePresence>
         {displayText.map((letter, index) => (
-          <motion.span
-            key={index}
-            className={cn("font-mono", letter === " " ? "w-3" : "")}
-          >
-            {letter.toUpperCase()}
+          <motion.span key={index} className={cn("font-mono", letter === " " ? "w-3" : "")}> 
+            {letter}
           </motion.span>
         ))}
       </AnimatePresence>
     </MotionComponent>
   );
 }
+
+

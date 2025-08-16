@@ -1,5 +1,5 @@
-import { Copy, ExternalLink, Settings, LogOut } from 'lucide-react'
-import { useDisconnect } from 'wagmi'
+import { Copy, ExternalLink, Settings } from 'lucide-react'
+import { AuthButton } from '@coinbase/cdp-react/components/AuthButton'
 
 interface MenuItemsProps {
   address: string | undefined
@@ -7,7 +7,6 @@ interface MenuItemsProps {
 }
 
 export function MenuItems({ address, setDropdownOpen }: MenuItemsProps) {
-  const { disconnect } = useDisconnect()
 
   const copyAddress = () => {
     if (address) {
@@ -15,10 +14,7 @@ export function MenuItems({ address, setDropdownOpen }: MenuItemsProps) {
     }
   }
 
-  const handleDisconnect = () => {
-    disconnect()
-    setDropdownOpen(false)
-  }
+  const handleClose = () => setDropdownOpen(false)
 
   return (
     <div className="py-1">
@@ -45,13 +41,9 @@ export function MenuItems({ address, setDropdownOpen }: MenuItemsProps) {
       
       <div className="border-t border-border my-1" />
       
-      <button
-        onClick={handleDisconnect}
-        className="flex items-center w-full px-3 py-2 text-sm text-red-500"
-      >
-        <LogOut className="h-4 w-4 mr-3" />
-        Disconnect
-      </button>
+      <div className="px-3 py-2">
+        <AuthButton onClick={handleClose} />
+      </div>
     </div>
   )
 } 

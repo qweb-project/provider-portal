@@ -35,13 +35,13 @@ export function ConnectedProfile({
         variant="outline"
         radius="xl"
         size="sm"
-        className={`flex items-center space-x-2 ${className} ${hoverable ? 'hover:bg-primary/10' : ''}`}
+        className={`flex items-center ${className} ${hoverable ? 'hover:bg-primary/10' : ''}`}
       >
-        <div className="w-6 h-6 rounded-full">
+        <div className="w-full h-12 rounded-full">
           <img 
             src={getPP(address)} 
             alt="Profile" 
-            className="w-6 h-6 object-cover" 
+            className="w-12 h-12 object-cover" 
           />
         </div>        
         <span className="hidden sm:inline text-xs font-medium">

@@ -7,9 +7,9 @@ import { routeTree } from './routeTree.gen'
 
 import './assets/css/styles.css'
 import reportWebVitals from './reportWebVitals.ts'
-import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { wagmiConfig } from './wagmi'
+import { CDPReactProvider } from '@coinbase/cdp-react'
+import { CDP_CONFIG as cdpConfig, APP_CONFIG as appConfig } from './coinbase'
 
 // Create a new router instance
 const router = createRouter({
@@ -36,11 +36,11 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <WagmiProvider config={wagmiConfig}>
+      <CDPReactProvider config={cdpConfig} app={appConfig}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
         </QueryClientProvider>
-      </WagmiProvider>
+      </CDPReactProvider>
     </StrictMode>,
   )
 }
