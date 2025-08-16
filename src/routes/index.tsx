@@ -1,222 +1,89 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { 
-    useState, 
-    useMemo,
-    useEffect
-} from 'react'
-import { useEvmAddress } from '@coinbase/cdp-hooks'
-import { type RegisterFormData, registerSchema } from '@/types'
-import { Meteors } from "@/components/magicui/meteors";
-import { StepOne } from '@/components/register/StepOne'
-import { StepTwo } from '@/components/register/StepTwo'
+import { createFileRoute } from '@tanstack/react-router'
+import { useMemo } from 'react'
+import { useReadContract } from 'wagmi'
 import { websiteRegistryAbi, websiteRegistryAddress } from '@/lib/contracts'
-import { 
-    type BaseError,
-    useAccount, 
-    useWriteContract,
-    useWaitForTransactionReceipt,
-    useChainId, 
-    useSwitchChain 
-} from 'wagmi'
-import { baseSepolia } from 'wagmi/chains'
+import { useThemeContext } from '@/context/ThemeContext'
+import { WebsiteCard } from '@/components/WebsiteCard'
+import { Meteors } from '@/components/magicui/meteors'
+import { Globe } from "@/components/magicui/globe";
+import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-button'
+import { useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: Send,
+  component: Websites,
 })
 
-function Send() {
+function Websites() {
+  useThemeContext()
   const navigate = useNavigate()
-  const { evmAddress: address } = useEvmAddress()
-  const { isConnected, address: wagmiAddress } = useAccount()
-  const chainId = useChainId()
-  const { switchChainAsync } = useSwitchChain()
-  const { writeContract, data: hash, error: writeError, isPending: isWritePending } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess: isConfirmed, error: receiptError } = useWaitForTransactionReceipt({ hash })
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1)
-  const [formData, setFormData] = useState<RegisterFormData>({
-    mcpServerUrl: '',
-    amount: 0.0001
+  const { data: allWebsites, isLoading } = useReadContract({
+    abi: websiteRegistryAbi,
+    address: websiteRegistryAddress,
+    functionName: 'getAllWebsites',
   })
-  const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
-  
-  const validation = useMemo(() => {
-    const result = registerSchema.safeParse(formData)
-    return {
-      isValid: result.success,
-      errors: result.success ? {} : result.error
-    }
-  }, [formData])
 
-  const handleInputChange = (field: keyof RegisterFormData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const raw = e.target.value
-    const nextValue = field === 'amount' ? (raw === '' ? 0 : Number(raw)) : raw
-    setFormData(prev => ({ ...prev, [field]: nextValue } as RegisterFormData))
-    
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }))
-    }
-    
-    // Clear success/error messages when user starts typing again
-    if (submitSuccess) {
-      setSubmitSuccess(null)
-    }
-    if (submitError) {
-      setSubmitError(null)
-    }
-  }
+  const websiteList: any[] = useMemo(() => {
+    return Array.isArray(allWebsites) ? (allWebsites as any[]) : []
+  }, [allWebsites])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const content = (
+    <div className="min-h-[75vh] p-8">
+      <div className="mx-auto w-full max-w-6xl">
+  <div className="justify-center items-center mb-6">
+      {/* hero */}
+     <div className="relative flex size-full w-full min-w-lg items-center justify-center overflow-hidden rounded-lg border bg-background px-40 pb-40 pt-8 md:pb-60">
+      <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-6xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+        Monetize your website in <br></br><span className="text-primary">1 click</span>
+      </span>
+      <Globe className="top-28" />
+      <div className="pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(0,0,0,0.2),rgba(255,255,255,0))]" />
+    <InteractiveHoverButton className="absolute bottom-2 right-2" onClick={() => navigate({ to: '/register' })}>Register Website</InteractiveHoverButton>
+    </div>
+    </div>
+    <div className="p-2 bg-card rounded-lg p-10 min-h-[35vh]">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Registered Websites</h1>
+          <div className="text-sm text-muted-foreground">Total: {websiteList.length}</div>
+        </div>
 
-    setSubmitError(null)
-    setSubmitSuccess(null)
+        {isLoading ? (
+          <div className="text-center text-muted-foreground py-12">Loading websites...</div>
+        ) : websiteList.length === 0 ? (
+          <div className="text-center text-muted-foreground py-12">No websites registered yet.</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {websiteList.map((website: any, index: number) => {
+              const url: string = website?.url ?? website?.[0]
+              const owner: string | undefined = website?.owner ?? website?.[1]
+              const paywallRaw: bigint | number = (website?.paywall ?? website?.[2] ?? 0) as any
+              const paywallUSDC = Number(paywallRaw) / 1_000_000
 
-    const result = registerSchema.safeParse(formData)
-    if (!result.success) {
-      const fieldErrors = result.error
-      setErrors(fieldErrors as Partial<Record<keyof RegisterFormData, string>>)
-      return
-    }
-    
-    // Move to step 2 for review
-    setCurrentStep(2)
-  }
-
-  const handleFinalSubmit = async () => {
-    if (!isConnected) {
-      setSubmitError('Please connect your wallet to continue')
-      return
-    }
-
-    const connectedAddress = (wagmiAddress || address) as `0x${string}` | undefined
-    if (!connectedAddress) {
-      setSubmitError('Wallet address not available')
-      return
-    }
-
-    try {
-      setIsSubmitting(true)
-      setSubmitError(null)
-      setSubmitSuccess(null)
-
-      if (chainId !== baseSepolia.id) {
-        await switchChainAsync({ chainId: baseSepolia.id })
-      }
-
-      // Convert USDC amount (6 decimals) to integer units
-      const paywallUnits = BigInt(Math.round(formData.amount * 1_000_000))
-
-      console.log('Writing contract with:', {
-        mcpServerUrl: formData.mcpServerUrl,
-        connectedAddress,
-        contractAddress: websiteRegistryAddress,
-        paywallUnits: paywallUnits.toString()
-      })
-
-      writeContract({
-        abi: websiteRegistryAbi,
-        address: websiteRegistryAddress,
-        functionName: 'registerWebsite',
-        args: [formData.mcpServerUrl, connectedAddress, paywallUnits],
-      })
-    } catch (err) {
-      console.error('Error in handleFinalSubmit:', err)
-      const message = (err as BaseError)?.shortMessage || (err instanceof Error ? err.message : 'Unknown error')
-      setSubmitError(message)
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleBack = () => {
-    setCurrentStep(1)
-    setSubmitError(null)
-    setSubmitSuccess(null)
-  }
-
-  // Handle transaction confirmation
-  useEffect(() => {
-    if (isConfirmed) {
-      console.log('Transaction confirmed!')
-      localStorage.setItem('mcpServerUrl', formData.mcpServerUrl)
-      localStorage.setItem('amount', formData.amount.toString())
-      setSubmitSuccess('Website URL registered!')
-      setIsSubmitting(false)
-      
-      // Redirect to dashboard after 2 seconds
-      setTimeout(() => {
-        navigate({ to: '/dashboard' })
-      }, 2000)
-    }
-  }, [isConfirmed, formData.mcpServerUrl, formData.amount, navigate])
-
-  // Handle errors
-  useEffect(() => {
-    if (writeError || receiptError) {
-      console.log('Transaction error:', { writeError, receiptError })
-      const message = (writeError as BaseError)?.shortMessage 
-        || (receiptError as BaseError)?.shortMessage 
-        || (writeError as Error)?.message 
-        || (receiptError as Error)?.message 
-        || 'Transaction failed'
-      setSubmitError(message)
-      setIsSubmitting(false)
-    }
-  }, [writeError, receiptError])
-
-  // Debug logging
-  useEffect(() => {
-    if (hash) {
-      console.log('Transaction hash:', hash)
-    }
-  }, [hash])
-
-  useEffect(() => {
-    if (isConfirming) {
-      console.log('Transaction confirming...')
-    }
-  }, [isConfirming])
-
-  const isButtonDisabled = isSubmitting || isWritePending || isConfirming || !validation.isValid || !formData.mcpServerUrl.trim()
-
-  const formContent = currentStep === 1 ? (
-    <StepOne
-      currentStep={currentStep}
-      formData={formData}
-      errors={errors}
-      onInputChange={handleInputChange}
-      onNext={handleSubmit}
-      isButtonDisabled={isButtonDisabled}
-    />
-  ) : (
-    <StepTwo
-      currentStep={currentStep}
-      address={address ?? undefined}
-      formData={formData}
-      onBack={handleBack}
-      onConfirm={handleFinalSubmit}
-      isSubmitting={isSubmitting}
-      submitError={submitError}
-      submitSuccess={submitSuccess}
-    />
+              return (
+                <WebsiteCard
+                  key={`${url}-${index}`}
+                  url={url}
+                  owner={owner}
+                  paywallUSDC={paywallUSDC}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
+      </div>
+    </div>
   )
-  
+
   return (
     <>
       <div className="hidden md:block">
-      <Meteors number={30} />
-          {formContent}
-
+        <Meteors number={30} />
+        {content}
       </div>
 
-      <div className="md:hidden">
-        {formContent}
-      </div>
-      
+      <div className="md:hidden">{content}</div>
     </>
   )
-} 
+}
+
+

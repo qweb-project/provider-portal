@@ -149,7 +149,7 @@ function Dashboard() {
   }
 
   const handleAddWebsite = () => {
-    navigate({ to: '/' })
+    navigate({ to: '/register' })
   }
 
   if (!isConnected || !connectedAddress) {
