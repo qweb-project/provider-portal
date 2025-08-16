@@ -103,7 +103,7 @@ function Send() {
       setIsSubmitting(true)
       setSubmitError(null)
       setSubmitSuccess(null)
-
+      console.log('chainId', chainId)
       if (chainId !== baseSepolia.id) {
         await switchChainAsync({ chainId: baseSepolia.id })
       }
