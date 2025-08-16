@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { useReadContract } from 'wagmi'
+import { baseSepolia } from 'wagmi/chains'
 import { websiteRegistryAbi, websiteRegistryAddress } from '@/lib/contracts'
 import { useThemeContext } from '@/context/ThemeContext'
 import { WebsiteCard } from '@/components/WebsiteCard'
@@ -20,6 +21,7 @@ function Websites() {
     abi: websiteRegistryAbi,
     address: websiteRegistryAddress,
     functionName: 'getAllWebsites',
+    chainId: baseSepolia.id,
   })
 
   const websiteList: any[] = useMemo(() => {

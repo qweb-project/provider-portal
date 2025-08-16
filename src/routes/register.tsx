@@ -123,6 +123,7 @@ function Send() {
         address: websiteRegistryAddress,
         functionName: 'registerWebsite',
         args: [formData.mcpServerUrl, connectedAddress, paywallUnits],
+        chainId: baseSepolia.id,
       })
     } catch (err) {
       console.error('Error in handleFinalSubmit:', err)

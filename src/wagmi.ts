@@ -1,5 +1,5 @@
 import { http, createConfig } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
+import { baseSepolia } from 'wagmi/chains'
 import { createCDPEmbeddedWalletConnector } from '@coinbase/cdp-wagmi'
 import { CDP_CONFIG as cdpConfig } from './coinbase';
 
@@ -7,9 +7,8 @@ import { CDP_CONFIG as cdpConfig } from './coinbase';
 const connector = createCDPEmbeddedWalletConnector({
   cdpConfig: cdpConfig,
   providerConfig: {
-    chains: [base, baseSepolia],
+    chains: [baseSepolia],
     transports: {
-      [base.id]: http(),
       [baseSepolia.id]: http()
     }
   }
@@ -17,9 +16,8 @@ const connector = createCDPEmbeddedWalletConnector({
 
 export const wagmiConfig = createConfig({
   connectors: [connector],
-  chains: [base, baseSepolia],
+  chains: [baseSepolia],
   transports: {
-    [base.id]: http(),
     [baseSepolia.id]: http(),
   },
 });

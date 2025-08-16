@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { baseSepolia } from 'wagmi/chains'
 import { useEvmAddress } from '@coinbase/cdp-hooks'
 import { websiteRegistryAbi, websiteRegistryAddress } from '@/lib/contracts'
 import { useThemeContext } from '@/context/ThemeContext'
@@ -99,6 +100,7 @@ function Dashboard() {
     address: websiteRegistryAddress,
     functionName: 'getWebsites',
     args: connectedAddress ? [connectedAddress] : undefined,
+    chainId: baseSepolia.id,
     query: {
       enabled: !!connectedAddress,
     },
@@ -145,6 +147,7 @@ function Dashboard() {
       address: websiteRegistryAddress,
       functionName: 'removeWebsite',
       args: [websiteUrl],
+      chainId: baseSepolia.id,
     })
   }
 
