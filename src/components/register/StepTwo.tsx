@@ -10,7 +10,7 @@ import { BorderBeam } from '@/components/magicui/border-beam'
 import { HyperText } from '@/components/magicui/hyper-text'
 import { ConnectedProfile } from '@/components/connect-wallet'
 import { type RegisterFormData } from '@/types'
-import { Button } from '../Button'
+
 type Props = {
   currentStep: 1 | 2
   address?: `0x${string}` | undefined
