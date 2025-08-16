@@ -1,21 +1,18 @@
-import { Copy, ExternalLink, Settings } from 'lucide-react'
-import { AuthButton } from '@coinbase/cdp-react/components/AuthButton'
+import { Copy, ExternalLink, LogOut } from 'lucide-react'
+import { useSignOut } from '@coinbase/cdp-hooks'
 
 interface MenuItemsProps {
   address: string | undefined
   setDropdownOpen: (open: boolean) => void
 }
 
-export function MenuItems({ address, setDropdownOpen }: MenuItemsProps) {
-
+export function MenuItems({ address }: MenuItemsProps) {
+  const { signOut } = useSignOut();
   const copyAddress = () => {
     if (address) {
       navigator.clipboard.writeText(address)
     }
   }
-
-  const handleClose = () => setDropdownOpen(false)
-
   return (
     <div className="py-1">
       <button
@@ -34,15 +31,13 @@ export function MenuItems({ address, setDropdownOpen }: MenuItemsProps) {
         View on Explorer
       </button>
       
-      <button className="flex items-center w-full px-3 py-2 text-sm">
-        <Settings className="h-4 w-4 mr-3" />
-        Settings
-      </button>
-      
       <div className="border-t border-border my-1" />
       
       <div className="px-3 py-2">
-        <AuthButton onClick={handleClose} />
+        <button className="flex items-center justify-center w-full px-3 py-2 text-sm" onClick={signOut}>
+          <LogOut className="h-4 w-4 mr-3" />
+          Sign Out
+        </button>
       </div>
     </div>
   )

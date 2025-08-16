@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { AuthButton } from '@coinbase/cdp-react/components/AuthButton'
 import { useEvmAddress } from '@coinbase/cdp-hooks'
 import { ConnectedProfile } from './ConnectedProfile'
+import { ConnectButton } from './ConnectButton'
 
 export function ConnectWallet() {
   const { evmAddress: address } = useEvmAddress()
@@ -17,5 +17,9 @@ export function ConnectWallet() {
     )
   }
   
-  return <AuthButton />
+  return (
+    <div className="flex items-center gap-2">
+      <ConnectButton />
+    </div>
+  )
 } 

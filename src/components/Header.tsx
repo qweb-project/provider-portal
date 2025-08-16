@@ -1,4 +1,4 @@
-import { ThemeModeToggle } from './theme/ThemeModeToggle'
+import { ThemeToggle } from './theme'
 import { ConnectWallet } from './connect-wallet'
 
 export default function Header() {
@@ -10,7 +10,7 @@ export default function Header() {
       </div>
       <div className="flex flex-row lg:space-x-4 space-x-2 justify-center">
         <ConnectWallet />
-        <ThemeModeToggle layout="icon" />
+        <ThemeToggle />
       </div>
     </header>
   )

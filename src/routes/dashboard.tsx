@@ -16,6 +16,7 @@ export const Route = createFileRoute('/dashboard')({
 type WebsiteLike = {
   url?: string
   paywall?: bigint | number
+  address?: string
 } | any
 
 function formatPaywallToUSDC(value: bigint | number | undefined): number {
@@ -31,6 +32,7 @@ function WebsitesList({
   isLoading,
   onAddWebsite,
   onDeleteWebsite,
+  ownerAddress,
   variant,
   emptyCtaLabel,
 }: {
@@ -38,6 +40,7 @@ function WebsitesList({
   isLoading: boolean
   onAddWebsite: () => void
   onDeleteWebsite: (url: string) => void
+  ownerAddress?: string
   variant: 'desktop' | 'mobile'
   emptyCtaLabel: string
 }) {
@@ -70,6 +73,7 @@ function WebsitesList({
           <WebsiteCard
             key={`${url}-${index}`}
             url={url}
+            owner={ownerAddress}
             paywallUSDC={paywallUSDC}
             onDelete={onDeleteWebsite}
           />
@@ -181,6 +185,7 @@ function Dashboard() {
               isLoading={isLoadingWebsites}
               onAddWebsite={handleAddWebsite}
               onDeleteWebsite={handleDeleteWebsite}
+              ownerAddress={connectedAddress}
               variant="desktop"
               emptyCtaLabel="Register Your First Website"
             />
@@ -210,6 +215,7 @@ function Dashboard() {
               isLoading={isLoadingWebsites}
               onAddWebsite={handleAddWebsite}
               onDeleteWebsite={handleDeleteWebsite}
+              ownerAddress={connectedAddress}
               variant="mobile"
               emptyCtaLabel="Register First Website"
             />
