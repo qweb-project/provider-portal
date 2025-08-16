@@ -10,6 +10,8 @@ import reportWebVitals from './reportWebVitals.ts'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CDPReactProvider } from '@coinbase/cdp-react'
 import { CDP_CONFIG as cdpConfig, APP_CONFIG as appConfig } from './coinbase'
+import { wagmiConfig } from './wagmi.ts'
+import { WagmiProvider } from 'wagmi'
 
 // Create a new router instance
 const router = createRouter({
@@ -37,9 +39,11 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <CDPReactProvider config={cdpConfig} app={appConfig}>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </WagmiProvider>
       </CDPReactProvider>
     </StrictMode>,
   )

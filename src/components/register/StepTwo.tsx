@@ -10,7 +10,7 @@ import { BorderBeam } from '@/components/magicui/border-beam'
 import { HyperText } from '@/components/magicui/hyper-text'
 import { ConnectedProfile } from '@/components/connect-wallet'
 import { type RegisterFormData } from '@/types'
-
+import { Button } from '../Button'
 type Props = {
   currentStep: 1 | 2
   address?: `0x${string}` | undefined
@@ -75,14 +75,14 @@ export function StepTwo({ currentStep, address, formData, onBack, onConfirm, isS
               <div className="flex flex-col items-center gap-4 w-full">
                 <div className="flex justify-between w-full">
                   <InteractiveHoverButton className="flex-1" onClick={onBack}>
-                    <HyperText className="text-foreground text-md font-bold">
+                    
                       Back
-                    </HyperText>
+                  
                   </InteractiveHoverButton>
                   <InteractiveHoverButton className="flex-1" disabled={isSubmitting} onClick={onConfirm}>
-                    <HyperText className="text-foreground text-md font-bold">
+                  
                       {isSubmitting ? 'Processing...' : 'Confirm'}
-                    </HyperText>
+
                   </InteractiveHoverButton>
                 </div>
                 {submitError && (

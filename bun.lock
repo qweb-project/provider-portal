@@ -5,6 +5,7 @@
       "name": "frontend",
       "dependencies": {
         "@coinbase/cdp-react": "^0.0.20",
+        "@coinbase/cdp-wagmi": "^0.0.20",
         "@hono/node-server": "^1.17.1",
         "@radix-ui/react-label": "^2.1.7",
         "@tailwindcss/vite": "^4.0.6",
@@ -125,6 +126,8 @@
     "@coinbase/cdp-hooks": ["@coinbase/cdp-hooks@0.0.20", "", { "peerDependencies": { "@coinbase/cdp-core": "^0.0.20", "react": ">=18.2.0" } }, "sha512-qSPkDFu9uEz4hWIHYQ3BFE47CePxci0RONZhkpeJ0+3aB1/d7/sXOHB+s2cggRvxpEbL1gDkfU+k8Uekvxq4WA=="],
 
     "@coinbase/cdp-react": ["@coinbase/cdp-react@0.0.20", "", { "dependencies": { "@radix-ui/react-dialog": "^1.1.14", "@radix-ui/react-form": "^0.1.7", "@radix-ui/react-one-time-password-field": "^0.1.7", "libphonenumber-js": "^1.12.10", "react-transition-state": "2.3.0" }, "peerDependencies": { "@coinbase/cdp-core": "^0.0.20", "@coinbase/cdp-hooks": "^0.0.20", "react": ">=18.2.0" } }, "sha512-UzOQJqbP9HDfbuBlGT0s9NEKzdVyXgjLbyyb2hohIdM22e6/u3/g4tlgueV0IUpNspjvvwdOPbqJvsyb+tU6Ug=="],
+
+    "@coinbase/cdp-wagmi": ["@coinbase/cdp-wagmi@0.0.20", "", { "peerDependencies": { "@coinbase/cdp-core": "^0.0.20", "@tanstack/react-query": "^5.0.0", "react": ">=18.2.0", "viem": "^2.33.0", "wagmi": "^2.16.0" } }, "sha512-vKRopctVzMv8u5WjPuILpfNjjI/1FwO0QqloaCgqhe8GWH8EJQMvmmEv3FsTuizNEQof6e/pVyEvlMjSbra6wQ=="],
 
     "@coinbase/wallet-sdk": ["@coinbase/wallet-sdk@4.3.6", "", { "dependencies": { "@noble/hashes": "1.4.0", "clsx": "1.2.1", "eventemitter3": "5.0.1", "idb-keyval": "6.2.1", "ox": "0.6.9", "preact": "10.24.2", "viem": "^2.27.2", "zustand": "5.0.3" } }, "sha512-4q8BNG1ViL4mSAAvPAtpwlOs1gpC+67eQtgIwNvT3xyeyFFd+guwkc8bcX5rTmQhXpqnhzC4f0obACbP9CqMSA=="],
 

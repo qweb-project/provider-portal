@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@coinbase/cdp-react": "^0.0.20",
+    "@coinbase/cdp-wagmi": "^0.0.20",
     "@hono/node-server": "^1.17.1",
     "@radix-ui/react-label": "^2.1.7",
     "@tailwindcss/vite": "^4.0.6",

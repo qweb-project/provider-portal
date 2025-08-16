@@ -90,9 +90,9 @@ export function StepOne({ currentStep, formData, errors, onInputChange, onNext, 
                   onClick={onNext}
                   type="submit"
                 >
-                  <HyperText className="text-foreground text-md font-bold">
+                  
                     Next
-                  </HyperText>
+                  
                 </InteractiveHoverButton>
                 {errors.mcpServerUrl && (
                   <div className="text-sm text-red-500 text-center">

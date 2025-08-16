@@ -1,12 +1,25 @@
-import { porto } from 'porto/wagmi'
-import { http, createConfig, createStorage } from 'wagmi'
-import { baseSepolia } from 'wagmi/chains'
- 
+import { http, createConfig } from 'wagmi'
+import { base, baseSepolia } from 'wagmi/chains'
+import { createCDPEmbeddedWalletConnector } from '@coinbase/cdp-wagmi'
+import { CDP_CONFIG as cdpConfig } from './coinbase';
+
+
+const connector = createCDPEmbeddedWalletConnector({
+  cdpConfig: cdpConfig,
+  providerConfig: {
+    chains: [base, baseSepolia],
+    transports: {
+      [base.id]: http(),
+      [baseSepolia.id]: http()
+    }
+  }
+});
+
 export const wagmiConfig = createConfig({
-  chains: [baseSepolia],
-  connectors: [porto()], 
-  storage: createStorage({ storage: localStorage }),
+  connectors: [connector],
+  chains: [base, baseSepolia],
   transports: {
+    [base.id]: http(),
     [baseSepolia.id]: http(),
   },
-})
+});
