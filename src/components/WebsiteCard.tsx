@@ -54,7 +54,21 @@ export function WebsiteCard({ url, owner, paywallUSDC, onDelete, isDeleting = fa
           </p>
 
           <div className="text-sm text-muted-foreground">
-            {ownerShort ? `Owner: ${ownerShort}` : 'Owner: Unknown'}
+            {ownerShort ? (
+              <>
+                Owner:{' '}
+                <a
+                  href={`https://sepolia.basescan.org/address/${owner}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 underline transition-colors"
+                >
+                  {ownerShort}
+                </a>
+              </>
+            ) : (
+              'Owner: Unknown'
+            )}
           </div>
 
           <div className="mt-auto flex items-center justify-between pt-2">
