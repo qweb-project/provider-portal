@@ -15,7 +15,7 @@ export default function Header() {
       </div>
       <div className="flex flex-row lg:space-x-4 space-x-2 justify-center">
         <Button variant="outline" size="sm" radius="xl">
-          <a href="https://67babb296313.ngrok-free.app/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">
+          <a href="https://definitely-glowing-mutt.ngrok-free.app/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">
             Qweb Chat
             <ArrowUpRight className="h-4 w-4" />
           </a>
