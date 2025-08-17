@@ -10,6 +10,7 @@ import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-b
 import { BorderBeam } from '@/components/magicui/border-beam'
 import { HyperText } from '@/components/magicui/hyper-text'
 import { type RegisterFormData } from '@/types'
+import { Button } from '@/components/Button'
 
 type Props = {
   currentStep: 1 | 2
@@ -93,10 +94,10 @@ export function StepOne({ currentStep, formData, errors, onInputChange, onNext, 
                       <div className="text-xs p-2 rounded bg-muted break-all select-all">
                         {verificationToken}
                       </div>
-                      <div className="flex items-center gap-3">
-                        <InteractiveHoverButton onClick={onVerify} disabled={verifyingDns} type="button">
+                      <div className="flex items-center justify-end gap-3">
+                        <Button className="min-w-full" onClick={onVerify} disabled={verifyingDns} type="button">
                           {verifyingDns ? 'Verifying…' : 'Verify DNS'}
-                        </InteractiveHoverButton>
+                        </Button>
                         {dnsVerified && (
                           <span className="text-xs text-green-500">Verified</span>
                         )}
