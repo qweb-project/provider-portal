@@ -39,6 +39,7 @@ function Websites() {
       </span>
       <Globe className="top-28" />
       <div className="pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(0,0,0,0.2),rgba(255,255,255,0))]" />
+    <p className="absolute bottom-2 left-4 text-xs text-muted-foreground">Powered by x402</p>
     <InteractiveHoverButton className="absolute bottom-2 right-2" onClick={() => navigate({ to: '/register' })}>Register Website</InteractiveHoverButton>
     </div>
     </div>
