@@ -6,6 +6,7 @@ import {
 } from 'react'
 import { useEvmAddress } from '@coinbase/cdp-hooks'
 import { type RegisterFormData, registerSchema } from '@/types'
+import { sanitizeHostname } from '@/lib/utils'
 import { Meteors } from "@/components/magicui/meteors";
 import { StepOne } from '@/components/register/StepOne'
 import { StepTwo } from '@/components/register/StepTwo'
@@ -25,6 +26,7 @@ export const Route = createFileRoute('/register')({
 })
 
 function Send() {
+  
   const navigate = useNavigate()
   const { evmAddress: address } = useEvmAddress()
   const { isConnected, address: wagmiAddress } = useAccount()
@@ -54,7 +56,16 @@ function Send() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const raw = e.target.value
-    const nextValue = field === 'amount' ? (raw === '' ? 0 : Number(raw)) : raw
+    let nextValue: string | number
+    if (field === 'amount') {
+      nextValue = raw === '' ? 0 : Number(raw)
+    } else if (field === 'mcpServerUrl') {
+      // Only sanitize aggressively when user pastes or types protocol/www
+      const shouldSanitize = /^https?:\/\//i.test(raw) || /^www\./i.test(raw) || raw.includes('://')
+      nextValue = shouldSanitize ? sanitizeHostname(raw) : raw.trim()
+    } else {
+      nextValue = raw
+    }
     setFormData(prev => ({ ...prev, [field]: nextValue } as RegisterFormData))
     
     if (errors[field]) {
@@ -73,15 +84,22 @@ function Send() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+
     setSubmitError(null)
     setSubmitSuccess(null)
 
     const result = registerSchema.safeParse(formData)
     if (!result.success) {
-      const fieldErrors = result.error
-      setErrors(fieldErrors as Partial<Record<keyof RegisterFormData, string>>)
+      const flat = result.error.flatten()
+      const nextErrors: Partial<Record<keyof RegisterFormData, string>> = {
+        mcpServerUrl: flat.fieldErrors.mcpServerUrl?.[0],
+        amount: flat.fieldErrors.amount?.[0],
+      }
+      setErrors(nextErrors)
       return
     }
+    // Persist sanitized values from schema transform
+    setFormData(result.data)
     
     // Move to step 2 for review
     setCurrentStep(2)

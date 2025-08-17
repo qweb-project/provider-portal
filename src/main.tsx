@@ -12,6 +12,8 @@ import { CDPReactProvider } from '@coinbase/cdp-react'
 import { CDP_CONFIG as cdpConfig, APP_CONFIG as appConfig } from './coinbase'
 import { wagmiConfig } from './wagmi.ts'
 import { WagmiProvider } from 'wagmi'
+import { baseSepolia } from 'wagmi/chains'
+import { OnchainKitProvider } from '@coinbase/onchainkit'
 
 // Create a new router instance
 const router = createRouter({
@@ -38,6 +40,11 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
+       <OnchainKitProvider 
+    apiKey={import.meta.env.VITE_CDP_API_KEY} 
+    chain={baseSepolia} 
+    config={{ paymaster: import.meta.env.VITE_PAYMASTER_AND_BUNDLER_ENDPOINT }}
+    >
       <CDPReactProvider config={cdpConfig} app={appConfig}>
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
@@ -45,6 +52,7 @@ if (rootElement && !rootElement.innerHTML) {
           </QueryClientProvider>
         </WagmiProvider>
       </CDPReactProvider>
+      </OnchainKitProvider>
     </StrictMode>,
   )
 }

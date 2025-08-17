@@ -37,7 +37,7 @@ export function WebsiteCard({ url, owner, paywallUSDC, onDelete, isDeleting = fa
       <BorderBeam colorFrom={theme === 'dark' ? 'hsl(var(--primary))' : 'hsl(var(--primary))'} />
       <MagicCard
         gradientColor={theme === 'dark' ? 'hsl(var(--primary))' : 'hsl(var(--primary))'}
-        className="p-4 rounded-xl min-h-[20vh] border-1 border-primary/40 hover:border-primary transition-colors h-full"
+        className="p-4 rounded-xl min-h-[20vh] border-1 border-primary/40 transition-colors h-full"
         gradientOpacity={0.15}
         gradientSize={50}
       >
@@ -47,15 +47,11 @@ export function WebsiteCard({ url, owner, paywallUSDC, onDelete, isDeleting = fa
         )}
       />
         <div className="flex flex-col gap-3 h-full">
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
-            title={url}
+          <p
+            className="text-lg font-semibold text-foreground transition-colors"
           >
             {hostname}
-          </a>
+          </p>
 
           <div className="text-sm text-muted-foreground">
             {ownerShort ? `Owner: ${ownerShort}` : 'Owner: Unknown'}

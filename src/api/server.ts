@@ -70,5 +70,4 @@ app.get('/me', async (c) => {
     return c.json({ error: 'Invalid token' }, 401)
   }
 })
-
 export default app 

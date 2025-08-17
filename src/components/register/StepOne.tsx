@@ -52,8 +52,8 @@ export function StepOne({ currentStep, formData, errors, onInputChange, onNext, 
                     <div className="relative rounded-md mt-2">
                       <Input 
                         id="mcpServerUrl" 
-                        type="url"
-                        placeholder="https://qweb.ai"
+                        type="text"
+                        placeholder="qweb.ai"
                         value={formData.mcpServerUrl}
                         onChange={onInputChange('mcpServerUrl')}
                         className={errors.mcpServerUrl ? 'border-red-500 mt-2' : 'mt-2'}
