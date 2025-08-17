@@ -18,9 +18,14 @@ type Props = {
   onInputChange: (field: keyof RegisterFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   onNext: (e: React.FormEvent) => void
   isButtonDisabled: boolean
+  verificationToken: string
+  dnsVerified: boolean
+  verifyingDns: boolean
+  dnsError: string | null
+  onVerify: () => void
 }
 
-export function StepOne({ currentStep, formData, errors, onInputChange, onNext, isButtonDisabled }: Props) {
+export function StepOne({ currentStep, formData, errors, onInputChange, onNext, isButtonDisabled, verificationToken, dnsVerified, verifyingDns, dnsError, onVerify }: Props) {
   const { theme } = useThemeContext()
 
   return (
@@ -79,6 +84,31 @@ export function StepOne({ currentStep, formData, errors, onInputChange, onNext, 
                       <span className="text-sm text-red-500">{errors.amount}</span>
                     )}
                   </div>
+                  {formData.mcpServerUrl && (
+                    <div className="grid gap-2 mt-2">
+                      <label className="text-sm font-medium text-muted-foreground">DNS Verification</label>
+                      <div className="text-xs text-muted-foreground">
+                        Add this TXT record to {formData.mcpServerUrl}:
+                      </div>
+                      <div className="text-xs p-2 rounded bg-muted break-all select-all">
+                        {verificationToken}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <InteractiveHoverButton onClick={onVerify} disabled={verifyingDns} type="button">
+                          {verifyingDns ? 'Verifying…' : 'Verify DNS'}
+                        </InteractiveHoverButton>
+                        {dnsVerified && (
+                          <span className="text-xs text-green-500">Verified</span>
+                        )}
+                        {dnsError && (
+                          <span className="text-xs text-red-500">{dnsError}</span>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        DNS can take time to propagate. You may need to wait a few minutes and try again.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </form>
             </CardContent>

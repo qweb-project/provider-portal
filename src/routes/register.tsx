@@ -43,6 +43,9 @@ function Send() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [dnsVerified, setDnsVerified] = useState(false)
+  const [verifyingDns, setVerifyingDns] = useState(false)
+  const [dnsError, setDnsError] = useState<string | null>(null)
   
   const validation = useMemo(() => {
     const result = registerSchema.safeParse(formData)
@@ -71,6 +74,10 @@ function Send() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))
     }
+    if (field === 'mcpServerUrl') {
+      setDnsVerified(false)
+      setDnsError(null)
+    }
     
     // Clear success/error messages when user starts typing again
     if (submitSuccess) {
@@ -78,6 +85,37 @@ function Send() {
     }
     if (submitError) {
       setSubmitError(null)
+    }
+  }
+
+  const verificationToken = useMemo(() => {
+    const host = formData.mcpServerUrl?.trim().toLowerCase()
+    if (!host) return ''
+    return `qweb-site-verification=${host}`
+  }, [formData.mcpServerUrl])
+
+  const verifyDomain = async () => {
+    const domain = formData.mcpServerUrl.trim()
+    if (!domain || !verificationToken) return
+    try {
+      setVerifyingDns(true)
+      setDnsError(null)
+      const res = await fetch(`/api/verify-domain?domain=${encodeURIComponent(domain)}&token=${encodeURIComponent(verificationToken)}`)
+      const data = await res.json()
+      if (!res.ok) {
+        setDnsVerified(false)
+        setDnsError(data?.error || 'Verification failed')
+        return
+      }
+      setDnsVerified(Boolean(data?.verified))
+      if (!data?.verified) {
+        setDnsError('Verification token not found in TXT records')
+      }
+    } catch (err: any) {
+      setDnsVerified(false)
+      setDnsError(err?.message || 'DNS verification error')
+    } finally {
+      setVerifyingDns(false)
     }
   }
 
@@ -200,7 +238,7 @@ function Send() {
     }
   }, [isConfirming])
 
-  const isButtonDisabled = isSubmitting || isWritePending || isConfirming || !validation.isValid || !formData.mcpServerUrl.trim()
+  const isButtonDisabled = isSubmitting || isWritePending || isConfirming || !validation.isValid || !formData.mcpServerUrl.trim() || !dnsVerified
 
   const formContent = currentStep === 1 ? (
     <StepOne
@@ -210,6 +248,11 @@ function Send() {
       onInputChange={handleInputChange}
       onNext={handleSubmit}
       isButtonDisabled={isButtonDisabled}
+      verificationToken={verificationToken}
+      dnsVerified={dnsVerified}
+      verifyingDns={verifyingDns}
+      dnsError={dnsError}
+      onVerify={verifyDomain}
     />
   ) : (
     <StepTwo

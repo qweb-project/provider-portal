@@ -5,6 +5,7 @@ import { Porto, ServerActions } from 'porto'
 import { ServerClient } from 'porto/viem'
 import { hashMessage } from 'viem'
 import { generateSiweNonce, parseSiweMessage } from 'viem/siwe'
+import { promises as dns } from 'dns'
 
 type Env = {
   JWT_SECRET?: string
@@ -68,6 +69,26 @@ app.get('/me', async (c) => {
     return c.json({ address: decoded.sub, authenticated: true })
   } catch (error) {
     return c.json({ error: 'Invalid token' }, 401)
+  }
+})
+
+// DNS TXT verification endpoint
+app.get('/verify-domain', async (c) => {
+  const url = new URL(c.req.url)
+  const domain = url.searchParams.get('domain')?.trim().toLowerCase()
+  const expectedToken = url.searchParams.get('token')?.trim()
+
+  if (!domain || !expectedToken) {
+    return c.json({ verified: false, error: 'Missing domain or token' }, 400)
+  }
+
+  try {
+    const txtRecords = await dns.resolveTxt(domain)
+    const flat = txtRecords.flat().map((r) => r.toString())
+    const verified = flat.some((record) => record.includes(expectedToken) || record === expectedToken)
+    return c.json({ verified, records: process.env.NODE_ENV === 'development' ? flat : undefined })
+  } catch (error: any) {
+    return c.json({ verified: false, error: 'DNS lookup failed', details: process.env.NODE_ENV === 'development' ? String(error?.message || error) : undefined }, 200)
   }
 })
 export default app 
